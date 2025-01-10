@@ -1,16 +1,14 @@
 class CurrentWeather {
-  final double lat;
-  final double lon;
+  final int lastUpdatedTS;
+  final String lastUpdated;
 
-  const CurrentWeather({
-    required this.lat,
-    required this.lon,
-  });
+  const CurrentWeather(
+      {required this.lastUpdatedTS, required this.lastUpdated});
 
   factory CurrentWeather.fromJson(Map<String, dynamic> json) {
     return CurrentWeather(
-      lat: json['lat'],
-      lon: json['lon'],
+      lastUpdatedTS: json['last_updated_epoch'],
+      lastUpdated: json['last_updated'],
     );
   }
 }

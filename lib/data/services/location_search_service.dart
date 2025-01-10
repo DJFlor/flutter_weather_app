@@ -10,10 +10,10 @@ class LocationSearchService {
       'http://api.weatherapi.com/v1/search.json?key=16309e007f0f40a5a80123044221507&q=';
 
   Future<APIResponse<List<Location>>> getLocationList(String location) {
-    print("** Searching for: $location");
+    // print("** Searching for: $location");
     return http.get(Uri.parse(url + location)).then((value) {
-      print("** Response status code: ${value.statusCode}");
-      print("** Response body: ${value.body}");
+      // print("** Response status code: ${value.statusCode}");
+      // print("** Response body: ${value.body}");
       // Evaluate the response code:
       switch (value.statusCode) {
         /** HTTP OK: valid response with List of 0 to more Locations **/
