@@ -11,6 +11,7 @@ import 'package:flutter_weather_app/data/services/weather_forcast_service.dart';
 import 'package:flutter_weather_app/data/services/location_search_service.dart';
 
 // Widget related imports:
+import 'package:flutter_weather_app/widgets/location_list/location_list.dart';
 import 'package:flutter_weather_app/widgets/location_list/i_location_list_delegate.dart';
 
 class WeatherPage extends StatefulWidget {
@@ -48,7 +49,6 @@ class _WeatherPageState extends State<WeatherPage>
   /* * * * * * * * * * * * * *
    * ILocationListDelegate:  *
    * * * * * * * * * * * * * */
-  // ILocationListDelegate:
   @override
   void locationSelected(Location location) {
     // A location has been seleced from the search list!
@@ -215,43 +215,9 @@ class _WeatherPageState extends State<WeatherPage>
               ),
             ),
             /**
-             * Next up is a sliver list to hold location search results:
+             * Next up is a sliver location list to hold location search results:
              */
-            SliverList(
-              // The list slivers will be served via a builder delegate.
-              // This allows for dynamically built children.
-              delegate: SliverChildBuilderDelegate(
-                // The builder method to generate the child tiles:
-                (context, idx) {
-                  // Begin by getting the candate location for the index:
-                  final loc = candidateLocations?[idx];
-
-                  if (loc != null) {
-                    // And return a list tile built from the lcoation if present:
-                    return Padding(
-                      padding:
-                          const EdgeInsets.only(top: 10, left: 15, right: 15),
-                      child: ListTile(
-                        tileColor: Colors.lightBlueAccent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        title: Text(loc.name),
-                        subtitle: Text("${loc.region}, ${loc.country}"),
-                        onTap: () {
-                          // When tapped, this location has been selected:
-                          locationSelected(loc);
-                        },
-                      ),
-                    );
-                  } else {
-                    // Otherwise, ship a null:
-                    return null;
-                  }
-                },
-                // And the child count tied to number of candidate locations:
-                childCount: candidateLocations?.length ?? 0,
-              ),
-            ),
+            LocationList(delegate: this),
             SliverList(
                 delegate: SliverChildBuilderDelegate(
               (context, idx) {

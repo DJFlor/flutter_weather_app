@@ -11,26 +11,40 @@ class LocationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: delegate.locationCount(),
-      itemBuilder: (BuildContext context, int idx) {
-        // Fetch the location for the index from the delegate:
-        final location = delegate.locationForIndex(idx);
-        // If we have a non-null location...
-        if (location != null) {
-          // Build a tile for the location:
-          return ListTile(
-            onTap: () {
-              // On tap, we notify the delegate this location was selected:
-              delegate.locationSelected(location);
-            },
-            title: Text(location.name),
-            subtitle: Text("${location.region}, ${location.country}"),
-          );
-        }
-        // No location for this index, no tile!
-        return null;
-      },
+    return SliverList(
+      // The list slivers will be served via a builder delegate.
+      // This allows for dynamically built children.
+      delegate: SliverChildBuilderDelegate(
+        // The builder method to generate the child tiles:
+        (context, idx) {
+          // Begin by getting the candate location for the index:
+          final loc = delegate.locationForIndex(idx);
+
+          // If we received a Location....
+          if (loc != null) {
+            // ...return a list tile built from the lcoation:
+            return Padding(
+              padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+              child: ListTile(
+                tileColor: Colors.lightBlueAccent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                title: Text(loc.name),
+                subtitle: Text("${loc.region}, ${loc.country}"),
+                onTap: () {
+                  // When tapped, notify the delegate this location has been selected:
+                  delegate.locationSelected(loc);
+                },
+              ),
+            );
+          } else {
+            // Otherwise, ship a null:
+            return null;
+          }
+        },
+        // And the child count supplied by the delegate:
+        childCount: delegate.locationCount(),
+      ),
     );
   }
 }
