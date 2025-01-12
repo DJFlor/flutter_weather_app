@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_weather_app/data/models/condition.dart';
-import 'package:flutter_weather_app/data/models/current_weather.dart';
-import 'package:flutter_weather_app/widgets/location_list/i_location_list_delegate.dart';
 import 'package:get_it/get_it.dart';
-import 'package:flutter_weather_app/data/services/current_weather_service.dart';
-import 'package:flutter_weather_app/data/services/location_search_service.dart';
+
+// Model imports;
 import 'package:flutter_weather_app/data/models/a_p_i_response.dart';
 import 'package:flutter_weather_app/data/models/location.dart';
+import 'package:flutter_weather_app/data/models/weather_forecast.dart';
+
+// Service imports:
+import 'package:flutter_weather_app/data/services/weather_forcast_service.dart';
+import 'package:flutter_weather_app/data/services/location_search_service.dart';
+
+// Widget related imports:
+import 'package:flutter_weather_app/widgets/location_list/i_location_list_delegate.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -22,7 +27,7 @@ class _WeatherPageState extends State<WeatherPage>
    * * * * * * * * * * */
   Location? selectedLocation;
   List<Location>? candidateLocations;
-  CurrentWeather? currentWeather;
+  WeatherForecast? weatherForecast;
   bool searching = false;
 
   // Utility method to cascadse searching state:
@@ -52,10 +57,10 @@ class _WeatherPageState extends State<WeatherPage>
       searchController.clear(); // clear search text
       searching = false; // hide close button
       candidateLocations = null; // clear search list
-      currentWeather = null; // clear current condition
+      weatherForecast = null; // clear weather forecast
     });
     // State has been set, fetch the current condition:
-    _fetchCurrentConditionsFor(location);
+    _fetchWeatherForecastFor(location);
   }
 
   @override
@@ -80,8 +85,8 @@ class _WeatherPageState extends State<WeatherPage>
       GetIt.instance<LocationSearchService>();
 
   // Service for fetching conditions:
-  CurrentWeatherService get currentWeatherService =>
-      GetIt.instance<CurrentWeatherService>();
+  WeatherForcastService get weatherForecastService =>
+      GetIt.instance<WeatherForcastService>();
 
   void _fetchCandidateLocationsFor(String location) async {
     // Fire off the location search service request:
@@ -101,24 +106,25 @@ class _WeatherPageState extends State<WeatherPage>
     }
   }
 
-  void _fetchCurrentConditionsFor(Location location) async {
+  void _fetchWeatherForecastFor(Location location) async {
     // Fire off the current condirtion service request:
-    APIResponse<CurrentWeather> response =
-        await currentWeatherService.getCurrentWeather(location);
+    APIResponse<WeatherForecast> response =
+        await weatherForecastService.getWeatherForecast(location);
 
-    print("***** RESPONSE: $response");
+    // print("***** RESPONSE: $response");
 
     if (!response.isError) {
-      print("********** GOT current condition!");
+      // print("********** GOT current condition!");
       setState(() {
         // If we still have a selectedLocation, update the currentCondition:
-        if (selectedLocation != null) {
-          currentWeather = response.data;
+        if (selectedLocation != null && response.data != null) {
+          weatherForecast = response.data;
         }
       });
-    } else {
-      print("********** GOT error: ${response.errorMessage}");
     }
+    // else {
+    //   print("********** GOT error: ${response.errorMessage}");
+    // }
   }
 
   /* * * * * * * * * * *

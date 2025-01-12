@@ -12,15 +12,15 @@ class CurrentWeatherService {
 
   Future<APIResponse<CurrentWeather>> getCurrentWeather(Location location) {
     final locId = "id:${location.id}";
-    print("** Fetching conditions for: $locId");
+    // print("** Fetching conditions for: $locId");
     return http.get(Uri.parse(url + locId)).then((value) {
-      print("** Response status code: ${value.statusCode}");
-      print("** Response body: ${value.body}");
+      // print("** Response status code: ${value.statusCode}");
+      // print("** Response body: ${value.body}");
       if (value.statusCode == 200) {
         final jsonData = json.decode(value.body) as Map<String, dynamic>;
-        print("******JSON DATA: ${jsonData.toString()}");
+        // print("******JSON DATA: ${jsonData.toString()}");
         final currentData = jsonData['current']!;
-        print("******CURRENT DATA: ${currentData.toString()}");
+        // print("******CURRENT DATA: ${currentData.toString()}");
         final condition = CurrentWeather.fromJson(currentData);
         return APIResponse<CurrentWeather>(data: condition);
       }
