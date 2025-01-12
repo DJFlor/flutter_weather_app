@@ -1,14 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter_weather_app/data/models/a_p_i_response.dart';
 import 'package:flutter_weather_app/data/models/location.dart';
-
+import 'package:flutter_weather_app/data/services/location_search/i_location_search_service.dart';
 import 'package:http/http.dart' as http;
 
-class LocationSearchService {
+class LocationSearchService implements ILocationSearchService {
   static const url =
       'http://api.weatherapi.com/v1/search.json?key=16309e007f0f40a5a80123044221507&q=';
 
+  @override
   Future<APIResponse<List<Location>>> getLocationList(String location) {
     // print("** Searching for: $location");
     return http.get(Uri.parse(url + location)).then((value) {

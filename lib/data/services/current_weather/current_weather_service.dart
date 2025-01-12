@@ -1,15 +1,15 @@
 import 'dart:convert';
-
 import 'package:flutter_weather_app/data/models/a_p_i_response.dart';
 import 'package:flutter_weather_app/data/models/current_weather.dart';
 import 'package:flutter_weather_app/data/models/location.dart';
-
+import 'package:flutter_weather_app/data/services/current_weather/i_current_weather_service.dart';
 import 'package:http/http.dart' as http;
 
-class CurrentWeatherService {
+class CurrentWeatherService implements ICurrentWeatherService {
   static const url =
       'http://api.weatherapi.com/v1/current.json?key=16309e007f0f40a5a80123044221507&aqi=yes&q=';
 
+  @override
   Future<APIResponse<CurrentWeather>> getCurrentWeather(Location location) {
     final locId = "id:${location.id}";
     // print("** Fetching conditions for: $locId");

@@ -7,8 +7,8 @@ import 'package:flutter_weather_app/data/models/location.dart';
 import 'package:flutter_weather_app/data/models/weather_forecast.dart';
 
 // Service imports:
-import 'package:flutter_weather_app/data/services/weather_forcast_service.dart';
-import 'package:flutter_weather_app/data/services/location_search_service.dart';
+import 'package:flutter_weather_app/data/services/location_search/i_location_search_service.dart';
+import 'package:flutter_weather_app/data/services/weather_forecast/i_weather_forecast_service.dart';
 
 // Widget related imports:
 import 'package:flutter_weather_app/widgets/location_list/location_list.dart';
@@ -81,12 +81,12 @@ class _WeatherPageState extends State<WeatherPage>
   final searchController = TextEditingController();
 
   // Service for querying locations:
-  LocationSearchService get locationSearchService =>
-      GetIt.instance<LocationSearchService>();
+  ILocationSearchService get locationSearchService =>
+      GetIt.instance<ILocationSearchService>();
 
   // Service for fetching conditions:
-  WeatherForcastService get weatherForecastService =>
-      GetIt.instance<WeatherForcastService>();
+  IWeatherForecastService get weatherForecastService =>
+      GetIt.instance<IWeatherForecastService>();
 
   void _fetchCandidateLocationsFor(String location) async {
     // Fire off the location search service request:

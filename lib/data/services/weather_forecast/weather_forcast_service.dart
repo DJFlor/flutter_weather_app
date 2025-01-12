@@ -1,15 +1,15 @@
 import 'dart:convert';
-
 import 'package:flutter_weather_app/data/models/a_p_i_response.dart';
-import 'package:flutter_weather_app/data/models/weather_forecast.dart';
 import 'package:flutter_weather_app/data/models/location.dart';
-
+import 'package:flutter_weather_app/data/models/weather_forecast.dart';
+import 'package:flutter_weather_app/data/services/weather_forecast/i_weather_forecast_service.dart';
 import 'package:http/http.dart' as http;
 
-class WeatherForcastService {
+class WeatherForcastService implements IWeatherForecastService {
   static const url =
       'http://api.weatherapi.com/v1/forecast.json?key=16309e007f0f40a5a80123044221507&days=1&aqi=no&alerts=no&q=';
 
+  @override
   Future<APIResponse<WeatherForecast>> getWeatherForecast(Location location) {
     final locId = "id:${location.id}";
     // print("** Fetching weather forecast for: $locId");
