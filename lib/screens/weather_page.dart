@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_app/widgets/current_weather/current_weather_card.dart';
 import 'package:get_it/get_it.dart';
 
 // Model imports;
@@ -133,6 +134,8 @@ class _WeatherPageState extends State<WeatherPage>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: Center(
           child: CustomScrollView(
@@ -152,7 +155,7 @@ class _WeatherPageState extends State<WeatherPage>
                         bottomRight: Radius.circular(80))),
                 expandedHeight: 90,
                 collapsedHeight: 90,
-                backgroundColor: Colors.blue,
+                backgroundColor: theme.primaryColor,
                 titleSpacing: 25,
                 /**
                  * 
@@ -225,17 +228,11 @@ class _WeatherPageState extends State<WeatherPage>
                   final loc = selectedLocation!;
                   return Padding(
                     padding:
-                        const EdgeInsets.only(top: 10, left: 15, right: 15),
-                    child: ListTile(
-                      tileColor: Colors.lightGreenAccent,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      title: Text(loc.name),
-                      subtitle: Text("${loc.region}, ${loc.country}"),
-                      onTap: () {
-                        // When tapped, this location has been selected:
-                        locationSelected(loc);
-                      },
+                        const EdgeInsets.only(top: 10, left: 50, right: 50),
+                    child: CurrentWeatherCard(
+                      location: loc,
+                      currentWeather: weatherForecast?.currentWeather,
+                      todaysForecast: weatherForecast?.todaysForecast,
                     ),
                   );
                 } else {
@@ -243,13 +240,8 @@ class _WeatherPageState extends State<WeatherPage>
                 }
               },
               childCount: selectedLocation != null ? 1 : 0,
-            ))
+            )),
           ])),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

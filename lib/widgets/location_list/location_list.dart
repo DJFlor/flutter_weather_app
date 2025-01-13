@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_app/widgets/location_list/i_location_list_delegate.dart';
+import 'package:flutter_weather_app/widgets/location_list/location_list_tile.dart';
 
 class LocationList extends StatelessWidget {
   final ILocationListDelegate delegate;
@@ -25,17 +26,7 @@ class LocationList extends StatelessWidget {
             // ...return a list tile built from the lcoation:
             return Padding(
               padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
-              child: ListTile(
-                tileColor: Colors.lightBlueAccent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                title: Text(loc.name),
-                subtitle: Text("${loc.region}, ${loc.country}"),
-                onTap: () {
-                  // When tapped, notify the delegate this location has been selected:
-                  delegate.locationSelected(loc);
-                },
-              ),
+              child: LocationListTile(loc: loc, delegate: delegate),
             );
           } else {
             // Otherwise, ship a null:
