@@ -16,11 +16,11 @@ class LocationListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = TextStyle(
-      color: theme.primaryColorDark,
+      color: theme.colorScheme.onPrimary,
     );
 
     return ListTile(
-      tileColor: theme.primaryColorLight,
+      tileColor: theme.primaryColorDark,
       titleTextStyle: style,
       subtitleTextStyle: style,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

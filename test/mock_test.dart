@@ -7,7 +7,7 @@ import 'package:get_it/get_it.dart';
 
 import 'mock_services/mock_current_weather_service.dart';
 import 'mock_services/mock_location_search_service.dart';
-import 'mock_weather_forecast_service.dart';
+import 'mock_services/mock_weather_forecast_service.dart';
 
 void main() {
   // Build mocks with accessible variables to have access to mock controls in tests:

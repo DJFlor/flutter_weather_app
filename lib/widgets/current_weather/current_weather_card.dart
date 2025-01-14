@@ -90,18 +90,7 @@ class CurrentWeatherCard extends StatelessWidget {
                       height: 128,
                       fit: BoxFit.fill,
                     )
-                  : SizedBox(width: 128, height: 128)
-              // currentWeather?.currentCondition.iconURL != null
-              //     ? Image.network(
-              //         "http${currentWeather!.currentCondition.iconURL!}",
-              //         width: 64,
-              //         height: 64,
-              //       )
-              //     : Placeholder(
-              //         fallbackWidth: 64,
-              //         fallbackHeight: 64,
-              //       )
-              ),
+                  : SizedBox(width: 128, height: 128)),
           // Condition Text:
           Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 20),

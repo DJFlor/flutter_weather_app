@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_app/data/models/forecast_hour.dart';
 import 'package:flutter_weather_app/widgets/current_weather/current_weather_card.dart';
+import 'package:flutter_weather_app/widgets/forecast_hour_list/forecast_hour_list.dart';
+import 'package:flutter_weather_app/widgets/forecast_hour_list/i_forecast_hour_list_delegate.dart';
 import 'package:get_it/get_it.dart';
 
 // Model imports;
@@ -23,7 +26,7 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage>
-    implements ILocationListDelegate {
+    implements ILocationListDelegate, IForecastHourListDelegate {
   /* * * * * * * * * * *
    * PAGE LEVEL STATE: *
    * * * * * * * * * * */
@@ -72,6 +75,19 @@ class _WeatherPageState extends State<WeatherPage>
   @override
   Location? locationForIndex(int idx) {
     return candidateLocations?[idx];
+  }
+
+  /* * * * * * * * * * * * * * * *
+   * IForecastHourListDelegate:  *
+   * * * * * * * * * * * * * * * */
+  @override
+  int forecastHourCount() {
+    return weatherForecast?.todaysForecast.hourlyForecasts.length ?? 0;
+  }
+
+  @override
+  ForecastHour? forecastHourForIndex(int idx) {
+    return weatherForecast?.todaysForecast.hourlyForecasts[idx];
   }
 
   /* * * * * * * * * * * * * *
@@ -221,6 +237,11 @@ class _WeatherPageState extends State<WeatherPage>
              * Next up is a sliver location list to hold location search results:
              */
             LocationList(delegate: this),
+            /**
+             * Followed by the CurrentWeatherCard for the location, wrapped
+             * in a sliver list so it can just disappear if we have no
+             * selected location
+             */
             SliverList(
                 delegate: SliverChildBuilderDelegate(
               (context, idx) {
@@ -241,6 +262,10 @@ class _WeatherPageState extends State<WeatherPage>
               },
               childCount: selectedLocation != null ? 1 : 0,
             )),
+            /**
+             * Followed by a sliver forecast hour list to hold today's hourly forecast:
+             */
+            ForecastHourList(delegate: this),
           ])),
     );
   }
