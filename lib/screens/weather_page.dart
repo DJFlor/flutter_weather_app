@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_app/data/models/forecast_day.dart';
 import 'package:flutter_weather_app/data/models/forecast_hour.dart';
 import 'package:flutter_weather_app/widgets/current_weather/current_weather_card.dart';
 import 'package:flutter_weather_app/widgets/forecast_hour_list/forecast_hour_list.dart';
@@ -154,9 +155,35 @@ class _WeatherPageState extends State<WeatherPage>
 
     if (!response.isError) {
       setState(() {
-        // If we still have a selectedLocation, update the currentCondition:
-        if (selectedLocation != null && response.data != null) {
-          weatherForecast = response.data;
+        final currentWeather = response.data?.currentWeather;
+        final todaysForecast = response.data?.todaysForecast;
+        // If we still have a selectedLocation and solid data, update the weather forecast:
+        if (selectedLocation != null &&
+            currentWeather != null &&
+            todaysForecast != null) {
+          // Create a pruned forecast list for only those hours later than the current forecast:
+          final List<ForecastHour> newForecastHours = todaysForecast
+              .hourlyForecasts
+              .where(
+                  (hour) => hour.forecastTimeTS > currentWeather.lastUpdatedTS)
+              .toList();
+
+          // Build the new forecast day:
+          final newTodaysForecast = ForecastDay(
+              dateTS: todaysForecast.dateTS,
+              date: todaysForecast.date,
+              maxTempC: todaysForecast.maxTempC,
+              maxTempF: todaysForecast.maxTempF,
+              minTempC: todaysForecast.minTempC,
+              minTempF: todaysForecast.minTempF,
+              condition: todaysForecast.condition,
+              // Using the pruned forecast hours:
+              hourlyForecasts: newForecastHours);
+
+          // set the weather forecast with the pruned todays forecast:
+          weatherForecast = WeatherForecast(
+              currentWeather: currentWeather,
+              todaysForecast: newTodaysForecast);
         }
       });
     }

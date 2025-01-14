@@ -17,6 +17,9 @@ class ForecastHourListTile extends StatelessWidget {
     );
 
     final iconUrl = forecastHour.condition.iconURL;
+    final conditionText = forecastHour.condition.text != null
+        ? "${forecastHour.condition.text} - "
+        : "";
     return ListTile(
       tileColor: theme.primaryColorDark,
       titleTextStyle: style,
@@ -29,9 +32,9 @@ class ForecastHourListTile extends StatelessWidget {
               fit: BoxFit.fill,
             )
           : SizedBox(width: 64, height: 64),
-      title: Text("${forecastHour.forecastTime} ${forecastHour.tempC} F"),
+      title: Text("${forecastHour.forecastTime} ${forecastHour.tempF} F"),
       subtitle: Text(
-          "${forecastHour.condition.text ?? ""} ${forecastHour.chanceOfRain + forecastHour.chanceOfSnow}% chance of precip"),
+          "$conditionText${forecastHour.chanceOfRain + forecastHour.chanceOfSnow}% chance of precip"),
     );
   }
 }
