@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_app/data/models/forecast_day.dart';
 import 'package:flutter_weather_app/data/models/forecast_hour.dart';
 import 'package:flutter_weather_app/widgets/current_weather/current_weather_card.dart';
 import 'package:flutter_weather_app/widgets/forecast_hour_list/forecast_hour_list.dart';
@@ -168,22 +167,11 @@ class _WeatherPageState extends State<WeatherPage>
                   (hour) => hour.forecastTimeTS > currentWeather.lastUpdatedTS)
               .toList();
 
-          // Build the new forecast day:
-          final newTodaysForecast = ForecastDay(
-              dateTS: todaysForecast.dateTS,
-              date: todaysForecast.date,
-              maxTempC: todaysForecast.maxTempC,
-              maxTempF: todaysForecast.maxTempF,
-              minTempC: todaysForecast.minTempC,
-              minTempF: todaysForecast.minTempF,
-              condition: todaysForecast.condition,
-              // Using the pruned forecast hours:
-              hourlyForecasts: newForecastHours);
-
-          // set the weather forecast with the pruned todays forecast:
+          // set the weather forecast with the pruned hourly forecast:
           weatherForecast = WeatherForecast(
               currentWeather: currentWeather,
-              todaysForecast: newTodaysForecast);
+              todaysForecast:
+                  todaysForecast.copyWith(hourlyForecasts: newForecastHours));
         }
       });
     }

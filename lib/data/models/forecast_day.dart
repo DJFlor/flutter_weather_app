@@ -23,6 +23,19 @@ class ForecastDay {
     required this.hourlyForecasts,
   });
 
+  // I only need to mutate the hourlyForecasts, so this is fine for now...
+  ForecastDay copyWith({List<ForecastHour>? hourlyForecasts}) {
+    return ForecastDay(
+        dateTS: dateTS,
+        date: date,
+        maxTempC: maxTempC,
+        maxTempF: maxTempF,
+        minTempC: minTempC,
+        minTempF: minTempF,
+        condition: condition,
+        hourlyForecasts: hourlyForecasts ?? this.hourlyForecasts);
+  }
+
   factory ForecastDay.fromJson(Map<String, dynamic> json) {
     // Iteratively deserialize the forecast hours:
     // print("=====> deserializing hours list...");
