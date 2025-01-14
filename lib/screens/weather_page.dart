@@ -195,6 +195,8 @@ class _WeatherPageState extends State<WeatherPage>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: Center(
           child: CustomScrollView(
@@ -212,6 +214,41 @@ class _WeatherPageState extends State<WeatherPage>
                 searchController: searchController,
               ),
             ),
+            /**
+             * Now show a little status pane if we are searching and the text is
+             * too short, or we have zero results:
+             */
+            SliverList(
+                delegate: SliverChildBuilderDelegate(
+              (context, idx) {
+                if (selectedLocation != null) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20, bottom: 20, left: 10, right: 10),
+                    child: Text(
+                      searchController.text.length < 3
+                          ? "Enter at least three characters..."
+                          : "No matching locations found.",
+                      style: TextStyle(
+                        color: theme.primaryColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        // fontStyle: FontStyle.italic
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                } else {
+                  return null;
+                }
+              },
+              // If we are searching and the text is too short, or we have no candidates, show a message.
+              childCount: searching &&
+                      (searchController.text.length < 3 ||
+                          (candidateLocations?.length ?? 0) < 1)
+                  ? 1
+                  : 0,
+            )),
             /**
              * Next up is a sliver location list to hold location search results:
              */
