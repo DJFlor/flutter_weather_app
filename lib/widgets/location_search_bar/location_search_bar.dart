@@ -60,8 +60,6 @@ class LocationSearchBar extends StatelessWidget {
         onChanged: (value) {
           // If we have cleared, clear the focus:
           if (searchController.text == "") {
-            print("111111111111111111111111");
-
             searchBarFocusNode.unfocus();
           }
           // Notify the delegate:
@@ -85,7 +83,6 @@ class LocationSearchBar extends StatelessWidget {
                     // Unfocus
                     FocusScope.of(context).unfocus();
                     // clear search field
-                    print("1111111");
                     searchController.clear();
                     // update delegate
                     delegate.setSearching(false);

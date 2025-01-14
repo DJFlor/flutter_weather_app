@@ -3,6 +3,8 @@ import 'package:flutter_weather_app/data/models/forecast_hour.dart';
 import 'package:flutter_weather_app/widgets/current_weather/current_weather_card.dart';
 import 'package:flutter_weather_app/widgets/forecast_hour_list/forecast_hour_list.dart';
 import 'package:flutter_weather_app/widgets/forecast_hour_list/i_forecast_hour_list_delegate.dart';
+import 'package:flutter_weather_app/widgets/location_search_bar/i_location_search_bar_delegate.dart';
+import 'package:flutter_weather_app/widgets/location_search_bar/location_search_bar.dart';
 import 'package:get_it/get_it.dart';
 
 // Model imports;
@@ -26,7 +28,10 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage>
-    implements ILocationListDelegate, IForecastHourListDelegate {
+    implements
+        ILocationListDelegate,
+        IForecastHourListDelegate,
+        ILocationSearchBarDelegate {
   /* * * * * * * * * * *
    * PAGE LEVEL STATE: *
    * * * * * * * * * * */
@@ -35,7 +40,13 @@ class _WeatherPageState extends State<WeatherPage>
   WeatherForecast? weatherForecast;
   bool searching = false;
 
-  // Utility method to cascadse searching state:
+  /* * * * * * * * * * * * * * * *
+   * ILocationSearchBarDelegate: *
+   * * * * * * * * * * * * * * * */
+  @override
+  bool isSearching() => searching;
+
+  @override
   void setSearching(bool newSearching) {
     if (newSearching != searching) {
       setState(() {
@@ -50,12 +61,24 @@ class _WeatherPageState extends State<WeatherPage>
     }
   }
 
+  @override
+  void searchStringUpdated(String searchString) {
+    // Set the searching status appropriately
+    setSearching(searchString != "");
+    // Kick off a location search provided we have more than 2 characters:
+    if (searchString.length > 2) {
+      _fetchCandidateLocationsFor(searchString);
+    }
+  }
+
   /* * * * * * * * * * * * * *
    * ILocationListDelegate:  *
    * * * * * * * * * * * * * */
   @override
   void locationSelected(Location location) {
     // A location has been seleced from the search list!
+    searchBarFocusNode.unfocus();
+    // Set all appropriate state:
     setState(() {
       selectedLocation = location; // stow location
       searchController.clear(); // clear search text
@@ -94,6 +117,10 @@ class _WeatherPageState extends State<WeatherPage>
    * CONTROLLERS & SERVICES: *
    * * * * * * * * * * * * * */
 
+  // FocusNode handle to the Location Search Bar, so we can
+  // clear it when a location is selected:
+  final searchBarFocusNode = FocusNode();
+
   // TextEditingController for managing search textfield:
   final searchController = TextEditingController();
 
@@ -110,10 +137,7 @@ class _WeatherPageState extends State<WeatherPage>
     APIResponse<List<Location>> response =
         await locationSearchService.getLocationList(location);
 
-    // print("***** RESPONSE: $response");
-
     if (!response.isError) {
-      // print("********** GOT ${response.data!.length} locations!");
       setState(() {
         // If we are stil searching, update the candidateLocations
         if (searching) {
@@ -128,10 +152,7 @@ class _WeatherPageState extends State<WeatherPage>
     APIResponse<WeatherForecast> response =
         await weatherForecastService.getWeatherForecast(location);
 
-    // print("***** RESPONSE: $response");
-
     if (!response.isError) {
-      // print("********** GOT current condition!");
       setState(() {
         // If we still have a selectedLocation, update the currentCondition:
         if (selectedLocation != null && response.data != null) {
@@ -139,9 +160,6 @@ class _WeatherPageState extends State<WeatherPage>
         }
       });
     }
-    // else {
-    //   print("********** GOT error: ${response.errorMessage}");
-    // }
   }
 
   /* * * * * * * * * * *
@@ -150,8 +168,6 @@ class _WeatherPageState extends State<WeatherPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       body: Center(
           child: CustomScrollView(
@@ -160,77 +176,13 @@ class _WeatherPageState extends State<WeatherPage>
               // and will contain other dynammic, scrollable sections,
               // defined statically in the slivers list:
               slivers: [
-            // First sliver is the app bar, which contains the search field:
+            // First sliver is the location search app bar:
             SliverPadding(
               padding: EdgeInsets.only(left: 25, right: 25),
-              sliver: SliverAppBar(
-                pinned: true,
-                shape: ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(80),
-                        bottomRight: Radius.circular(80))),
-                expandedHeight: 90,
-                collapsedHeight: 90,
-                backgroundColor: theme.primaryColor,
-                titleSpacing: 25,
-                /**
-                 * 
-                 * I'm choosing to use a TextField only here, and not a SearchAnchor
-                 * owing to the fact that the suggestion builder of the anchor is only
-                 * refreshed at the exact instant the text changes.  Our suggestions are
-                 * coming from an asyc source, the WeatherAPI search/autocomplete endpoint,
-                 * and will arrive after the suggestion builder is refreshed. 
-                 * 
-                 * The accepted work-around is to insert zero-width unicode spaces into the 
-                 * search string to affect a refresh, but I do not like sullying the data
-                 * that way, as downstreamm issues may arise, requiring us to prune the 
-                 * zero-width spaces, and that is too much squeeze for not enough juice.
-                 * 
-                 * It is bewtter to keep the data clean, and not play such games.
-                 * 
-                 * Also, the SearchBar enforces spell checking, and we don't want that for
-                 * this.  Full stop.  With TextField, we can turn it off.
-                 *
-                 * So instead, we use only a TextField, and a manually implemented
-                 * suggestion list, so that it might refresh when the suggestions change.
-                 *
-                 */
-
-                title: TextField(
-                  enableSuggestions: false,
-                  spellCheckConfiguration: SpellCheckConfiguration.disabled(),
-                  controller: searchController,
-                  // Handler called whenever the text changes:
-                  onChanged: (value) {
-                    // toggle searching value appropriately:
-                    setSearching(searchController.text != "");
-                    // refresh search candidates if we have at least 3 characters:
-                    if (searchController.text.length > 2) {
-                      _fetchCandidateLocationsFor(value);
-                    }
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    filled: true,
-                    hintText: 'Enter new location',
-                    contentPadding: EdgeInsets.all(20),
-                    /**
-                     * The suffix icon, when searching, is a "close" style
-                     * icon button that clears the search.  When not searching,
-                     * the trailing icon is a vanilla search icon.
-                     */
-                    suffixIcon: searching
-                        ? IconButton(
-                            onPressed: () {
-                              // clear search
-                              setSearching(false);
-                            },
-                            icon: const Icon(Icons.close))
-                        : const Icon(Icons.search),
-                  ),
-                ),
+              sliver: LocationSearchBar(
+                delegate: this,
+                searchBarFocusNode: searchBarFocusNode,
+                searchController: searchController,
               ),
             ),
             /**
