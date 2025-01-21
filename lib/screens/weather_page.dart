@@ -209,26 +209,22 @@ class _WeatherPageState extends State<WeatherPage>
             SliverList(
                 delegate: SliverChildBuilderDelegate(
               (context, idx) {
-                if (selectedLocation != null) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20, bottom: 20, left: 10, right: 10),
-                    child: Text(
-                      searchController.text.length < 3
-                          ? "Enter at least three characters..."
-                          : "No matching locations found.",
-                      style: TextStyle(
-                        color: theme.primaryColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        // fontStyle: FontStyle.italic
-                      ),
-                      textAlign: TextAlign.center,
+                return Padding(
+                  padding: const EdgeInsets.only(
+                      top: 20, bottom: 20, left: 10, right: 10),
+                  child: Text(
+                    searchController.text.length < 3
+                        ? "Enter at least three characters..."
+                        : "No matching locations found.",
+                    style: TextStyle(
+                      color: theme.primaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      // fontStyle: FontStyle.italic
                     ),
-                  );
-                } else {
-                  return null;
-                }
+                    textAlign: TextAlign.center,
+                  ),
+                );
               },
               // If we are searching and the text is too short, or we have no candidates, show a message.
               childCount: searching &&
