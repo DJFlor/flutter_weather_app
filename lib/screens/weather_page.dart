@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_app/data/models/forecast_hour.dart';
-import 'package:flutter_weather_app/widgets/current_weather/current_weather_card.dart';
-import 'package:flutter_weather_app/widgets/forecast_hour_list/forecast_hour_list.dart';
-import 'package:flutter_weather_app/widgets/forecast_hour_list/i_forecast_hour_list_delegate.dart';
-import 'package:flutter_weather_app/widgets/location_search_bar/i_location_search_bar_delegate.dart';
-import 'package:flutter_weather_app/widgets/location_search_bar/location_search_bar.dart';
 import 'package:get_it/get_it.dart';
 
 // Model imports;
 import 'package:flutter_weather_app/data/models/a_p_i_response.dart';
+import 'package:flutter_weather_app/data/models/forecast_hour.dart';
 import 'package:flutter_weather_app/data/models/location.dart';
 import 'package:flutter_weather_app/data/models/weather_forecast.dart';
 
@@ -17,8 +12,13 @@ import 'package:flutter_weather_app/data/services/location_search/i_location_sea
 import 'package:flutter_weather_app/data/services/weather_forecast/i_weather_forecast_service.dart';
 
 // Widget related imports:
+import 'package:flutter_weather_app/widgets/current_weather/current_weather_card.dart';
+import 'package:flutter_weather_app/widgets/forecast_hour_list/forecast_hour_list.dart';
+import 'package:flutter_weather_app/widgets/forecast_hour_list/i_forecast_hour_list_delegate.dart';
 import 'package:flutter_weather_app/widgets/location_list/location_list.dart';
 import 'package:flutter_weather_app/widgets/location_list/i_location_list_delegate.dart';
+import 'package:flutter_weather_app/widgets/location_search_bar/i_location_search_bar_delegate.dart';
+import 'package:flutter_weather_app/widgets/location_search_bar/location_search_bar.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
